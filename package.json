@@ -2,15 +2,25 @@
   "name": "@nest-workflows/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "migration:generate": "TS_NODE_PROJECT=libs/shared-models/tsconfig.migration.json typeorm-ts-node-commonjs migration:generate -d libs/shared-models/ormconfig.js",
+    "migration:run": "TS_NODE_PROJECT=libs/shared-models/tsconfig.migration.json typeorm-ts-node-commonjs migration:run -d libs/shared-models/ormconfig.js",
+    "migration:revert": "TS_NODE_PROJECT=libs/shared-models/tsconfig.migration.json typeorm-ts-node-commonjs migration:revert -d libs/shared-models/ormconfig.js",
+    "migration:show": "TS_NODE_PROJECT=libs/shared-models/tsconfig.migration.json typeorm-ts-node-commonjs migration:show -d libs/shared-models/ormconfig.js"
+  },
   "private": true,
   "dependencies": {
     "@nestjs/common": "^11.0.0",
     "@nestjs/core": "^11.0.0",
     "@nestjs/platform-express": "^11.0.0",
+    "@nestjs/typeorm": "^11.0.0",
     "axios": "^1.6.0",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.2",
+    "pg": "^8.16.3",
     "reflect-metadata": "^0.1.13",
-    "rxjs": "^7.8.0"
+    "rxjs": "^7.8.0",
+    "typeorm": "^0.3.25"
   },
   "devDependencies": {
     "@eslint/js": "^9.8.0",
