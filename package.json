@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
+    "start:dev": "nx run-many --target=serve --all --configuration=development --watch",
     "migration:generate": "TS_NODE_PROJECT=libs/shared-models/tsconfig.migration.json typeorm-ts-node-commonjs migration:generate -d libs/shared-models/ormconfig.js",
     "migration:run": "TS_NODE_PROJECT=libs/shared-models/tsconfig.migration.json typeorm-ts-node-commonjs migration:run -d libs/shared-models/ormconfig.js",
     "migration:revert": "TS_NODE_PROJECT=libs/shared-models/tsconfig.migration.json typeorm-ts-node-commonjs migration:revert -d libs/shared-models/ormconfig.js",
@@ -12,6 +13,7 @@
   "dependencies": {
     "@nestjs/common": "^11.0.0",
     "@nestjs/core": "^11.0.0",
+    "@nestjs/mapped-types": "^2.1.0",
     "@nestjs/platform-express": "^11.0.0",
     "@nestjs/typeorm": "^11.0.0",
     "axios": "^1.6.0",

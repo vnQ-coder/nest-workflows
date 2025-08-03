@@ -29,7 +29,7 @@ export class AppController {
   }
 
   @Get(':id')
-  async getUserById(@Param('id', ParseIntPipe) id: number) {
+  async getUserById(@Param('id', ParseIntPipe) id: string) {
     return this.appService.getUserById(id);
   }
 
@@ -45,14 +45,14 @@ export class AppController {
 
   @Put(':id')
   async updateUser(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseIntPipe) id: string,
     @Body() userData: UpdateUserDto
   ) {
     return this.appService.updateUser(id, userData);
   }
 
   @Delete(':id')
-  async deleteUser(@Param('id', ParseIntPipe) id: number) {
+  async deleteUser(@Param('id', ParseIntPipe) id: string) {
     await this.appService.deleteUser(id);
     return { message: 'User deleted successfully' };
   }

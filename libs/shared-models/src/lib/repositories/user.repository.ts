@@ -8,14 +8,14 @@ import { IBaseRepository } from './base.repository';
 export class UserRepository implements IBaseRepository<User> {
   constructor(
     @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    private readonly userRepository: Repository<User>
   ) {}
 
   async findAll(): Promise<User[]> {
     return this.userRepository.find();
   }
 
-  async findById(id: number): Promise<User | null> {
+  async findById(id: string): Promise<User | null> {
     return this.userRepository.findOne({ where: { id } });
   }
 
@@ -28,12 +28,12 @@ export class UserRepository implements IBaseRepository<User> {
     return this.userRepository.save(user);
   }
 
-  async update(id: number, userData: Partial<User>): Promise<User | null> {
+  async update(id: string, userData: Partial<User>): Promise<User | null> {
     await this.userRepository.update(id, userData);
     return this.findById(id);
   }
 
-  async delete(id: number): Promise<boolean> {
+  async delete(id: string): Promise<boolean> {
     const result = await this.userRepository.delete(id);
     return result.affected ? result.affected > 0 : false;
   }
@@ -46,4 +46,4 @@ export class UserRepository implements IBaseRepository<User> {
   async findByIds(ids: number[]): Promise<User[]> {
     return this.userRepository.findByIds(ids);
   }
-} 
+}

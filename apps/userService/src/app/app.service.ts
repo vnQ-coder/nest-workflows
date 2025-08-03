@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { UserRepository, User } from '@nest-workflows/shared-models';
 
 @Injectable()
@@ -14,7 +18,7 @@ export class AppService {
     return this.userRepository.findAll();
   }
 
-  async getUserById(id: number): Promise<User> {
+  async getUserById(id: string): Promise<User> {
     const user = await this.userRepository.findById(id);
     if (!user) {
       throw new NotFoundException('User not found');
@@ -32,7 +36,9 @@ export class AppService {
 
   async createUser(userData: Partial<User>): Promise<User> {
     // Check if email already exists
-    const emailExists = await this.userRepository.existsByEmail(userData.email!);
+    const emailExists = await this.userRepository.existsByEmail(
+      userData.email!
+    );
     if (emailExists) {
       throw new ConflictException('Email already exists');
     }
@@ -42,7 +48,7 @@ export class AppService {
     return this.userRepository.create(userData);
   }
 
-  async updateUser(id: number, userData: Partial<User>): Promise<User> {
+  async updateUser(id: string, userData: Partial<User>): Promise<User> {
     const user = await this.userRepository.update(id, userData);
     if (!user) {
       throw new NotFoundException('User not found');
@@ -50,7 +56,7 @@ export class AppService {
     return user;
   }
 
-  async deleteUser(id: number): Promise<void> {
+  async deleteUser(id: string): Promise<void> {
     const deleted = await this.userRepository.delete(id);
     if (!deleted) {
       throw new NotFoundException('User not found');
