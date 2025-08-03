@@ -1,17 +1,27 @@
-import { Controller, Get, Inject, OnModuleInit } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Inject,
+  OnModuleInit,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
-import axios from 'axios';
 import {
   UserServiceClient,
   USERS_PACKAGE_NAME,
   USER_SERVICE_NAME,
 } from '@nest-workflows/shared-types';
+import { UserHttpService } from '@nest-workflows/shared-services';
 
 @Controller('users')
 export class UsersController implements OnModuleInit {
   private usersService: UserServiceClient;
-  
-  constructor(@Inject(USERS_PACKAGE_NAME) private client: ClientGrpc) {}
+
+  constructor(
+    @Inject(USERS_PACKAGE_NAME) private client: ClientGrpc,
+    private readonly userHttpService: UserHttpService
+  ) {}
 
   onModuleInit() {
     this.usersService =
@@ -26,17 +36,16 @@ export class UsersController implements OnModuleInit {
   @Get('/all')
   async restApiFindAll() {
     try {
-      // Make HTTP call to userService REST API
-      const response = await axios.get('http://localhost:3001/users/all');
-      return response.data;
+      return await this.userHttpService.findAll();
     } catch (error) {
-      console.error('Error fetching users via REST API:', error);
-      return { error: 'Failed to fetch users via REST API' };
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: 'Failed to fetch users via REST API',
+          details: error.message,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
     }
-  }
-
-  @Get('/grpc')
-  grpcFindAll() {
-    return this.usersService.listUsers({});
   }
 }

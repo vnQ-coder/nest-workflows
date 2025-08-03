@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { UsersController } from './users/users.controller';
 import { USERS_PACKAGE_NAME } from '@nest-workflows/shared-types';
+import { SharedServicesModule } from '@nest-workflows/shared-services';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { USERS_PACKAGE_NAME } from '@nest-workflows/shared-types';
         },
       },
     ]),
+    SharedServicesModule,
   ],
   controllers: [UsersController],
 })
