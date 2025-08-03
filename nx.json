@@ -43,5 +43,18 @@
         "apps/userService-e2e/**/*"
       ]
     }
-  ]
+  ],
+  "targetDefaults": {
+    "build": {
+      "options": {
+        "assets": [
+          {
+            "glob": "*.proto",
+            "input": "libs/shared-types/src/lib/proto",
+            "output": "proto"
+          }
+        ]
+      }
+    }
+  }
 }

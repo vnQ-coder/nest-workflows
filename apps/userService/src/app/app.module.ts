@@ -5,6 +5,7 @@ import { APP_PIPE } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { User, SharedModelsModule } from '@nest-workflows/shared-models';
+import { SharedTypesModule } from '@nest-workflows/shared-types';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { User, SharedModelsModule } from '@nest-workflows/shared-models';
       synchronize: false,
     }),
     SharedModelsModule,
+    SharedTypesModule,
   ],
   controllers: [AppController],
   providers: [

@@ -15,7 +15,9 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@nest-workflows/shared-models": ["libs/shared-models/src/index.ts"]
+      "@nest-workflows/shared-models": ["libs/shared-models/src/index.ts"],
+      "@nest-workflows/shared-services": ["libs/shared-services/src/index.ts"],
+      "@nest-workflows/shared-types": ["libs/shared-types/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

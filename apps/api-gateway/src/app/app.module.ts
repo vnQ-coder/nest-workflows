@@ -1,10 +1,21 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { ClientsModule, Transport } from '@nestjs/microservices';
+import { UsersController } from './users/users.controller';
+import { USERS_PACKAGE_NAME } from '@nest-workflows/shared-types';
 
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [
+    ClientsModule.register([
+      {
+        name: USERS_PACKAGE_NAME,
+        transport: Transport.GRPC,
+        options: {
+          package: 'users',
+          protoPath: 'libs/shared-types/src/lib/proto/users.proto',
+        },
+      },
+    ]),
+  ],
+  controllers: [UsersController],
 })
 export class AppModule {}

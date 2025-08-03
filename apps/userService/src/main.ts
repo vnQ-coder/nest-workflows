@@ -1,21 +1,32 @@
-/**
- * This is not a production server yet!
- * This is only a minimal backend to get started.
- */
-
-import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import { join } from 'path';
 import { AppModule } from './app/app.module';
 
 async function bootstrap() {
+  // Create the main HTTP application
   const app = await NestFactory.create(AppModule);
-  const globalPrefix = 'api';
-  app.setGlobalPrefix(globalPrefix);
-  const port = process.env.PORT || 3002;
-  await app.listen(port);
-  Logger.log(
-    `🚀 Application is runnings on: http://localhost:${port}/${globalPrefix}`
-  );
+
+  // Enable CORS for HTTP API
+  app.enableCors();
+
+  // Create gRPC microservice
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.GRPC,
+    options: {
+      package: 'users',
+      protoPath: join(
+        process.cwd(),
+        'libs/shared-types/src/lib/proto/users.proto'
+      ),
+    },
+  });
+
+  // Start both HTTP and gRPC services
+  await app.startAllMicroservices();
+  await app.listen(3001);
+
+  console.log('User Service is running on port 3001 (HTTP + gRPC)');
 }
 
 bootstrap();
