@@ -1,10 +1,11 @@
 import {
   Controller,
   Get,
+  Post,
   Inject,
   OnModuleInit,
-  HttpException,
-  HttpStatus,
+  Body,
+  Patch,
 } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import {
@@ -12,16 +13,13 @@ import {
   USERS_PACKAGE_NAME,
   USER_SERVICE_NAME,
 } from '@nest-workflows/shared-types';
-import { UserHttpService } from '@nest-workflows/shared-services';
+import { UpdateUserDto } from '@nest-workflows/shared-services';
 
 @Controller('users')
 export class UsersController implements OnModuleInit {
   private usersService: UserServiceClient;
 
-  constructor(
-    @Inject(USERS_PACKAGE_NAME) private client: ClientGrpc,
-    private readonly userHttpService: UserHttpService
-  ) {}
+  constructor(@Inject(USERS_PACKAGE_NAME) private client: ClientGrpc) {}
 
   onModuleInit() {
     this.usersService =
@@ -33,19 +31,13 @@ export class UsersController implements OnModuleInit {
     return this.usersService.listUsers({});
   }
 
-  @Get('/all')
-  async restApiFindAll() {
-    try {
-      return await this.userHttpService.findAll();
-    } catch (error) {
-      throw new HttpException(
-        {
-          status: HttpStatus.INTERNAL_SERVER_ERROR,
-          error: 'Failed to fetch users via REST API',
-          details: error.message,
-        },
-        HttpStatus.INTERNAL_SERVER_ERROR
-      );
-    }
+  @Post()
+  create(@Body() body: { fullName: string; email: string; password: string }) {
+    return this.usersService.createUser(body);
+  }
+
+  @Patch()
+  update(@Body() body: UpdateUserDto) {
+    return this.usersService.updateUser(body);
   }
 }

@@ -12,7 +12,6 @@ export interface HttpServiceConfig {
 @Injectable()
 export class CustomHttpService {
   private readonly logger = new Logger(CustomHttpService.name);
-  private readonly httpService: HttpService;
 
   constructor(private readonly http: HttpService) {}
 
@@ -128,4 +127,4 @@ export class CustomHttpService {
       return new Error(`Request setup error: ${error.message}`);
     }
   }
-} 
+}
