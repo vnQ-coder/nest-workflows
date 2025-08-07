@@ -3,27 +3,55 @@ syntax = "proto3";
 package users;
 
 service UserService {
-  rpc CreateUser (CreateUserRequest) returns (UserResponse);
+  rpc CreateUser (CreateUserDto) returns (UserResponse);
   rpc GetUser (GetUserRequest) returns (UserResponse);
-  rpc UpdateUser (UpdateUserRequest) returns (UserResponse);
+  rpc UpdateUser (UpdateUserDto) returns (UserResponse);
   rpc DeleteUser (DeleteUserRequest) returns (DeleteUserResponse);
   rpc ListUsers (Empty) returns (UserListResponse);
 }
 
-message CreateUserRequest {
-  string fullName = 1;
+message CreateUserDto {
+  optional string id = 1;
   string email = 2;
   string password = 3;
+  optional string fullName = 4;
+  optional string phoneNumber = 5;
+  optional bool emailVerified = 6;
+  optional bool phoneVerified = 7;
+  optional string avatarUrl = 8;
+  optional string bio = 9;
+  optional string country = 10;
+  optional string role = 11;
+  repeated string permissions = 12;
+  optional string packageType = 13;
+  optional string packageExpiresAt = 14;
+  optional bool isSuspended = 15;
+  optional string suspensionReason = 16;
+  optional bool isActive = 17;
+}
+
+message UpdateUserDto {
+  optional string id = 1;
+  optional string email = 2;
+  optional string password = 3;
+  optional string fullName = 4;
+  optional string phoneNumber = 5;
+  optional bool emailVerified = 6;
+  optional bool phoneVerified = 7;
+  optional string avatarUrl = 8;
+  optional string bio = 9;
+  optional string country = 10;
+  optional string role = 11;
+  repeated string permissions = 12;
+  optional string packageType = 13;
+  optional string packageExpiresAt = 14;
+  optional bool isSuspended = 15;
+  optional string suspensionReason = 16;
+  optional bool isActive = 17;
 }
 
 message GetUserRequest {
   string id = 1;
-}
-
-message UpdateUserRequest {
-  string id = 1;
-  string fullName = 2;
-  string email = 3;
 }
 
 message DeleteUserRequest {
@@ -39,6 +67,7 @@ message UserResponse {
   string packageType = 6;
   string isActive = 7;
   string packageExpiresAt = 8;
+  string avatarUrl = 9;
 }
 
 message DeleteUserResponse {

@@ -6,14 +6,19 @@ import {
   OnModuleInit,
   Body,
   Patch,
+  UploadedFile,
+  UseInterceptors,
+  Param,
 } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import {
+  CreateUserDto,
+  UpdateUserDto,
   UserServiceClient,
   USERS_PACKAGE_NAME,
   USER_SERVICE_NAME,
 } from '@nest-workflows/shared-types';
-import { UpdateUserDto } from '@nest-workflows/shared-services';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('users')
 export class UsersController implements OnModuleInit {
@@ -32,12 +37,21 @@ export class UsersController implements OnModuleInit {
   }
 
   @Post()
-  create(@Body() body: { fullName: string; email: string; password: string }) {
+  create(@Body() body: CreateUserDto) {
     return this.usersService.createUser(body);
   }
 
-  @Patch()
-  update(@Body() body: UpdateUserDto) {
-    return this.usersService.updateUser(body);
+  @Patch(':id')
+  @UseInterceptors(FileInterceptor('avatar'))
+  uploadFile(
+    @Param('id') id: string,
+    @Body() body: UpdateUserDto,
+    @UploadedFile() file?: Express.Multer.File
+  ) {
+    return this.usersService.updateUser({
+      ...body,
+      id,
+      avatarUrl: file?.path || '',
+    });
   }
 }

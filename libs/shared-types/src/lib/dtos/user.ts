@@ -1,26 +1,36 @@
 import {
   IsEmail,
-  IsEnum,
   IsOptional,
   IsString,
+  MinLength,
+  MaxLength,
+  IsEnum,
   IsBoolean,
   IsArray,
   IsDateString,
-  MinLength,
 } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 import { UserRole, PackageType } from '@nest-workflows/shared-models';
+import { PartialType } from '@nestjs/mapped-types';
 
 export class CreateUserDto {
+  @IsOptional()
+  id!: string;
+
   @IsEmail()
-  email: string;
+  email!: string;
 
   @IsString()
   @MinLength(6)
-  password: string;
+  password!: string;
 
+  @IsOptional()
   @IsString()
-  fullName: string;
+  @MinLength(2, { message: 'Full name must be at least 2 characters long' })
+  @MaxLength(100, { message: 'Full name must not exceed 100 characters' })
+  @Transform(({ value }) => value?.trim())
+  fullName!: string;
 
   @IsOptional()
   @IsString()
@@ -75,3 +85,5 @@ export class CreateUserDto {
   @IsBoolean()
   isActive?: boolean;
 }
+
+export class UpdateUserDto extends PartialType(CreateUserDto) {}

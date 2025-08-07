@@ -1,27 +1,16 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Put,
-  Delete,
-  Body,
-  Param,
-  ParseIntPipe,
-} from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import {
   UserServiceController,
   UserServiceControllerMethods,
-  CreateUserRequest,
   GetUserRequest,
-  UpdateUserRequest,
   DeleteUserRequest,
   UserResponse,
   DeleteUserResponse,
   UserListResponse,
   Empty,
+  CreateUserDto,
+  UpdateUserDto,
 } from '@nest-workflows/shared-types';
 
 @Controller('users')
@@ -29,13 +18,8 @@ import {
 export class AppController implements UserServiceController {
   constructor(private readonly appService: AppService) {}
 
-  @Get()
-  getData() {
-    return this.appService.getData();
-  }
-
   // gRPC Methods
-  async createUser(request: CreateUserRequest): Promise<UserResponse> {
+  async createUser(request: CreateUserDto): Promise<UserResponse> {
     const user = await this.appService.createUser({
       fullName: request.fullName,
       email: request.email,
@@ -55,6 +39,7 @@ export class AppController implements UserServiceController {
       packageExpiresAt: user.packageExpiresAt
         ? user.packageExpiresAt.toISOString()
         : '',
+      avatarUrl: user.avatarUrl || '',
     };
   }
 
@@ -74,14 +59,12 @@ export class AppController implements UserServiceController {
       packageExpiresAt: user.packageExpiresAt
         ? user.packageExpiresAt.toISOString()
         : '',
+      avatarUrl: user.avatarUrl || '',
     };
   }
 
-  async updateUser(request: UpdateUserRequest): Promise<UserResponse> {
-    const user = await this.appService.updateUser(request.id, {
-      fullName: request.fullName,
-      email: request.email,
-    });
+  async updateUser(request: UpdateUserDto): Promise<UserResponse> {
+    const user = await this.appService.updateUser(request.id, request);
 
     return {
       id: user.id,
@@ -96,6 +79,7 @@ export class AppController implements UserServiceController {
       packageExpiresAt: user.packageExpiresAt
         ? user.packageExpiresAt.toISOString()
         : '',
+      avatarUrl: user?.avatarUrl || '',
     };
   }
 
@@ -120,43 +104,9 @@ export class AppController implements UserServiceController {
       packageExpiresAt: user.packageExpiresAt
         ? user.packageExpiresAt.toISOString()
         : '',
+      avatarUrl: user.avatarUrl || '',
     }));
 
     return { users: userResponses };
-  }
-
-  // REST API endpoints (keeping for backward compatibility)
-  @Get('all')
-  async getAllUsers() {
-    return this.appService.getAllUsers();
-  }
-
-  @Get(':id')
-  async getUserById(@Param('id', ParseIntPipe) id: string) {
-    return this.appService.getUserById(id);
-  }
-
-  @Get('email/:email')
-  async getUserByEmail(@Param('email') email: string) {
-    return this.appService.getUserByEmail(email);
-  }
-
-  @Post()
-  async createUserRest(@Body() userData: CreateUserDto) {
-    return this.appService.createUser(userData);
-  }
-
-  @Put(':id')
-  async updateUserRest(
-    @Param('id', ParseIntPipe) id: string,
-    @Body() userData: UpdateUserDto
-  ) {
-    return this.appService.updateUser(id, userData);
-  }
-
-  @Delete(':id')
-  async deleteUserRest(@Param('id', ParseIntPipe) id: string) {
-    await this.appService.deleteUser(id);
-    return { message: 'User deleted successfully' };
   }
 }

@@ -1,40 +1,19 @@
-import {
-  Module,
-  MiddlewareConsumer,
-  NestModule,
-  RequestMethod,
-} from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { MulterModule } from '@nestjs/platform-express';
-import { UsersController } from './users/users.controller';
-import { USERS_PACKAGE_NAME } from '@nest-workflows/shared-types';
+import {
+  allowedImageMimes,
+  AVATAR_UPLOAD_DIR,
+  USERS_PACKAGE_NAME,
+} from '@nest-workflows/shared-types';
 import { SharedServicesModule } from '@nest-workflows/shared-services';
-import { FileService } from './services/file.service';
-import { FileUploadMiddleware } from './middleware/file-upload.middleware';
 import * as multer from 'multer';
 import * as path from 'path';
 import * as fs from 'fs';
-
-// Define the directory where avatars will be uploaded
-const AVATAR_UPLOAD_DIR = path.join(process.cwd(), 'uploads', 'avatars');
-
-// Ensure the upload directory exists
-if (!fs.existsSync(AVATAR_UPLOAD_DIR)) {
-  fs.mkdirSync(AVATAR_UPLOAD_DIR, { recursive: true });
-}
-
-// Allowed image MIME types
-const allowedImageMimes = new Set([
-  'image/jpeg',
-  'image/jpg',
-  'image/png',
-  'image/gif',
-  'image/webp',
-]);
+import { UsersController } from './controllers/users.controller';
 
 @Module({
   imports: [
-    // gRPC client registration for the Users microservice
     ClientsModule.register([
       {
         name: USERS_PACKAGE_NAME,
@@ -45,11 +24,12 @@ const allowedImageMimes = new Set([
         },
       },
     ]),
-
-    // Multer configuration for avatar image upload
     MulterModule.register({
       storage: multer.diskStorage({
         destination: (_req, _file, cb) => {
+          if (!fs.existsSync(AVATAR_UPLOAD_DIR)) {
+            fs.mkdirSync(AVATAR_UPLOAD_DIR, { recursive: true });
+          }
           cb(null, AVATAR_UPLOAD_DIR);
         },
         filename: (_req, file, cb) => {
@@ -68,21 +48,12 @@ const allowedImageMimes = new Set([
         }
       },
       limits: {
-        fileSize: 5 * 1024 * 1024, // 5MB
+        fileSize: 5 * 1024 * 1024,
         files: 1,
       },
     }),
-
     SharedServicesModule,
   ],
   controllers: [UsersController],
-  providers: [FileService],
 })
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    // Apply file upload middleware only to PATCH /users/:id
-    consumer
-      .apply(FileUploadMiddleware)
-      .forRoutes({ path: 'users/:id', method: RequestMethod.PATCH });
-  }
-}
+export class AppModule {}

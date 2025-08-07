@@ -7,53 +7,17 @@
 /* eslint-disable */
 import { GrpcMethod, GrpcStreamMethod } from '@nestjs/microservices';
 import { Observable } from 'rxjs';
+import { CreateUserDto, UpdateUserDto } from '../../dtos/user';
+import {
+  DeleteUserRequest,
+  DeleteUserResponse,
+  Empty,
+  GetUserRequest,
+  UserListResponse,
+  UserResponse,
+} from '../../interfaces/user';
 
 export const protobufPackage = 'users';
-
-// 📨 Request Messages
-
-export interface CreateUserRequest {
-  fullName: string;
-  email: string;
-  password: string;
-}
-
-export interface GetUserRequest {
-  id: string;
-}
-
-export interface UpdateUserRequest {
-  id?: string;
-  fullName?: string;
-  email?: string;
-}
-
-export interface DeleteUserRequest {
-  userId: string;
-}
-
-export interface Empty {}
-
-// 📦 Response Messages
-
-export interface UserResponse {
-  id: string;
-  fullName: string;
-  email: string;
-  role: string;
-  permissions: string;
-  packageType: string;
-  isActive: string;
-  packageExpiresAt: string;
-}
-
-export interface DeleteUserResponse {
-  success: boolean;
-}
-
-export interface UserListResponse {
-  users: UserResponse[];
-}
 
 // 🚀 gRPC Service Name
 
@@ -64,11 +28,11 @@ export const USER_SERVICE_NAME = 'UserService';
 // 🧑‍💻 Client Interface
 
 export interface UserServiceClient {
-  createUser(request: CreateUserRequest): Observable<UserResponse>;
+  createUser(request: CreateUserDto): Observable<UserResponse>;
 
   getUser(request: GetUserRequest): Observable<UserResponse>;
 
-  updateUser(request: UpdateUserRequest): Observable<UserResponse>;
+  updateUser(request: UpdateUserDto): Observable<UserResponse>;
 
   deleteUser(request: DeleteUserRequest): Observable<DeleteUserResponse>;
 
@@ -79,7 +43,7 @@ export interface UserServiceClient {
 
 export interface UserServiceController {
   createUser(
-    request: CreateUserRequest
+    request: CreateUserDto
   ): Promise<UserResponse> | Observable<UserResponse> | UserResponse;
 
   getUser(
@@ -87,7 +51,7 @@ export interface UserServiceController {
   ): Promise<UserResponse> | Observable<UserResponse> | UserResponse;
 
   updateUser(
-    request: UpdateUserRequest
+    request: UpdateUserDto
   ): Promise<UserResponse> | Observable<UserResponse> | UserResponse;
 
   deleteUser(

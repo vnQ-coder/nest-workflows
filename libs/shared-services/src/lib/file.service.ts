@@ -42,7 +42,7 @@ export class FileService {
       const filePath = this.getFullFilePath(filename);
       await fs.unlink(filePath);
       this.logger.log(`Deleted file: ${filename}`);
-    } catch (error) {
+    } catch (error: any) {
       this.logger.warn(`Failed to delete file ${filename}:`, error.message);
     }
   }
@@ -67,8 +67,11 @@ export class FileService {
     try {
       const filePath = this.getFullFilePath(filename);
       return await fs.stat(filePath);
-    } catch (error) {
-      this.logger.warn(`Failed to get file stats for ${filename}:`, error.message);
+    } catch (error: any) {
+      this.logger.warn(
+        `Failed to get file stats for ${filename}:`,
+        error.message
+      );
       return null;
     }
   }
